@@ -1,49 +1,4 @@
-1
-2
-3
-4
-5
-6
-7
-8
-9
-10
-11
-12
-13
-14
-15
-16
-17
-18
-19
-20
-21
-22
-23
-24
-25
-26
-31
-32
-33
-34
-35
-36
-37
-38
-39
-40
-41
-42
-43
-44
-45
-46
-47
-48
-49
-50
+
 <?php
 // Work out the path to the database, so SQLite/PDO can connect
 $root = __DIR__;
@@ -77,14 +32,21 @@ if ($stmt === false)
         <h1>Blog title</h1>
         <p>This paragraph summarises what the blog is about.</p>
         
-
-        <?php for ($postId = 1; $postId <= 3; $postId++): ?>
-            <h2>Article <?php echo $postId ?> title</h2>
-            <div>dd Mon YYYY</div>
-            <p>A paragraph summarising article <?php echo $postId ?>.</p>
+        <?php while ($row = $stmt->fetch(PDO::FETCH_ASSOC)): ?>
+            <h2>
+                <?php echo htmlspecialchars($row['title'], ENT_HTML5, 'UTF-8') ?>
+            </h2>
+            <div>
+                <?php echo $row['created_at'] ?>
+            </div>
+            <p>
+                <?php echo htmlspecialchars($row['body'], ENT_HTML5, 'UTF-8') ?>
+            </p>
+            
+      
             <p>
                 <a href="#">Read more...</a>
             </p>
-        <?php endfor ?>
+            <?php endwhile ?>
     </body>
 </html>
