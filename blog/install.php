@@ -1,8 +1,8 @@
 <?php
+require_once 'lib/common.php';
 // Get the PDO DSN string
-$root = realpath(__DIR__);
-$database = $root . '/data/data.sqlite';
-$dsn = 'sqlite:' . $database;
+$root = getRootPath();
+$database = getDatabasePath();
 $error = '';
 // A security measure, to avoid anyone resetting the database if it already exists
 if (is_readable($database) && filesize($database) > 0)
@@ -33,7 +33,7 @@ if (!$error)
 // Connect to the new database and try to run the SQL commands
 if (!$error)
 {
-    $pdo = new PDO($dsn);
+    $pdo = getPDO();
     $result = $pdo->exec($sql);
     if ($result === false)
     {
@@ -41,14 +41,18 @@ if (!$error)
     }
 }
 // See how many rows we created, if any
-$count = null;
-if (!$error)
+$count = array();
+foreach(array('post', 'comment') as $tableName)
 {
-    $sql = "SELECT COUNT(*) AS c FROM post";
-    $stmt = $pdo->query($sql);
-    if ($stmt)
+    if (!$error)
     {
-        $count = $stmt->fetchColumn();
+        $sql = "SELECT COUNT(*) AS c FROM " . $tableName;
+        $stmt = $pdo->query($sql);
+        if ($stmt)
+        {
+            // We store each count in an associative array
+            $count[$tableName] = $stmt->fetchColumn();
+        }
     }
 }
 ?>
@@ -79,9 +83,15 @@ if (!$error)
         <?php else: ?>
             <div class="success box">
                 The database and demo data was created OK.
-                <?php if ($count): ?>
-                    <?php echo $count ?> new rows were created.
-                <?php endif ?>
+                <?php foreach (array('post', 'comment') as $tableName): ?>
+                    <?php if (isset($count[$tableName])): ?>
+                        <?php // Prints the count ?>
+                        <?php echo $count[$tableName] ?> new
+                        <?php // Prints the name of the thing ?>
+                        <?php echo $tableName ?>s
+                        were created.
+                    <?php endif ?>
+                <?php endforeach ?>
             </div>
         <?php endif ?>
     </body>

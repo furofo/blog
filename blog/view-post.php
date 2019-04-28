@@ -55,10 +55,11 @@ $paraText = str_replace("\n", "</p><p>", $bodyText);
         <?php echo htmlEscape($row['title']) ?>
         </h2>
         <div>
-            <?php echo $row['created_at'] ?>
+        <?php echo convertSqlDate($row['created_at']) ?>
         </div>
         <p>
-        <?php echo htmlEscape($row['title']) ?>
+        <?php // This is already escaped, so doesn't need further escaping ?>
+            <?php echo $paraText ?>
         </p>
     </body>
 </html>
